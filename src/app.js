@@ -1,24 +1,30 @@
 const express=require("express")
-
+const  connectDB=require("./config/database")
 const app=express();
+const User=require("./models/user")
 
-app.use("/admin",(req,res,next)=>{
-    const token="xyz";
-    if(token==="xyz"){
-        console.log("verified")
-        next()
+app.post("/signup",async (req,res)=>{
+    const user=new User({
+        firstName:"virat",
+        lastName:"kohli",
+        emailId:"virat@gmail.com",
+        password:"virat@123",
+    });
+    try{
+        await user.save();
+        res.send("user saved successfully");
+    }catch(err){
+res.status(400).send("errror saving")
     }
-    else{
-        res.send("Unauthorized")
-    }
-})
-app.get("/admin/getUser",(req,res)=>{
-    res.send("getUser")
-})
-app.get("/admin/deleteUser",(req,res)=>{
-    res.send("deleteUser")
-})
-app.listen(3000,()=>{
-    console.log("server is running on port 3000");
-    
 });
+connectDB().
+    then(()=>{
+        console.log("database connected");
+        app.listen(7777,()=>{    console.log("server is running on port 7777");
+    
+        });
+        
+    }).catch((err)=>{
+        console.error("db not connected")
+    })
+
