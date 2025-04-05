@@ -17,10 +17,12 @@ if(!user){
     throw new Error("!Invalid Credentilas");
 
 }
-const isPasswordValid=await bcrypt.compare(password,user.password);
+const isPasswordValid=await user.validatePassword(password)
 if (isPasswordValid) {
-    const token= await jwt.sign({_id:user._id}, "DEV@Tinder$790")
-    res.cookie("token",token)
+    const token=await user.getJWT();
+    res.cookie("token",token,{
+        expires:new Date(Date.now() + 8*3600000)
+    })
     res.send("Login Successful!!!");
   } else {
     throw new Error("Invalid credentials");
@@ -53,7 +55,6 @@ app.post("/signup", async (req, res) => {
 validateSignUpData(req);
 const {firstName,lastName,emailId,password}=req.body;
 const passwordHash=await bcrypt.hash(password,10);
-console.log(passwordHash);
 const user=new User({
     firstName,
     lastName,
@@ -73,7 +74,7 @@ app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
 
   try {
-    console.log(userEmail);
+   
     const user = await User.findOne({ emailId: userEmail });
     if (!user) {
       res.status(404).send("User not found");
@@ -135,7 +136,7 @@ app.patch("/user/:userId", async (req, res) => {
       returnDocument: "after",
       runValidators: true,
     });
-    console.log(user);
+
     res.send("User updated successfully");
   } catch (err) {
     res.status(400).send("UPDATE FAILED:" + err.message);
