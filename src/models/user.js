@@ -19,11 +19,10 @@ const userSchema= new mongoose.Schema({
         required:true,
         unique:true,
         trim:true,
-        validate(value) {
-            if (!validator.isEmail(value)) {
-              throw new Error("Invalid email address: " + value);
-            }
-          },
+        enum: {
+          values: ["male", "female", "other"],
+          message: `{VALUE} is not a valid gender type`,
+        },
     },
     password:{
         type:String,
