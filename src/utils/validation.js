@@ -18,8 +18,8 @@ const validateEditProfileData=(req)=>{
         "firstName",
         "lastName",
         "photoUrl",
-        "gender",
         "age",
+        "gender", 
         "about",
         "skills",
     ];
